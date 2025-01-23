@@ -1,1 +1,12 @@
- 
+# Ignora la carpeta del entorno virtual
+venv/
+
+# Ignora archivos compilados por Python
+__pycache__/
+*.py[cod]
+
+# Ignora checkpoints de Jupyter
+.ipynb_checkpoints/
+
+# Ignora archivos temporales de Mac
+.DS_Store
