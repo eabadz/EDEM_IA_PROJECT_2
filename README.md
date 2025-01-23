@@ -2,9 +2,11 @@
 
 ### Clonar el repositorio
 git clone https://github.com/tu_usuario/tu_repositorio.git
+(Aquí poned vuestro nombre de usuario y EDEM_IA_PROJECT_2 es el nombre del repo)
 
 ### Navegar al directorio del proyecto
 cd tu_repositorio
+(Yo me he puesto el proyecto en la carpeta de Github, pero porque ahí tengo todos los repos, ponedlo donde queráis.
 
 ### Crear y activar el entorno virtual
 python -m venv nombre_del_entorno
