@@ -1,22 +1,22 @@
 # EDEM_IA_PROJECT_2
 
-# Clonar el repositorio
+#Clonar el repositorio
 git clone https://github.com/tu_usuario/tu_repositorio.git
 
-# Navegar al directorio del proyecto
+#Navegar al directorio del proyecto
 cd tu_repositorio
 
-# Crear y activar el entorno virtual
+#Crear y activar el entorno virtual
 python -m venv nombre_del_entorno
 .\nombre_del_entorno\Scripts\activate
 
-# Instalar las dependencias
+#Instalar las dependencias
 pip install -r requirements.txt
 
-# Crear y cambiar a una nueva rama
+#Crear y cambiar a una nueva rama
 git checkout -b nombre_de_la_rama
 
-# Hacer cambios y commit
+#Hacer cambios y commit
 git add .
 git commit -m "Descripción de los cambios"
 
