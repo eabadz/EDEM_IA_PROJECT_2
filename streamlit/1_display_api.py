@@ -61,7 +61,7 @@ scaler = cargar_scaler()
 
 # ======================= SIDEBAR Y NAVEGACIÓN =======================
 st.sidebar.title("📌 Menú")
-pagina = st.sidebar.radio("Ir a:", ["Inicio", "EDA - Análisis de Datos", "Predicción", "Sobre el Modelo"])
+pagina = st.sidebar.radio("Ir a:", ["Inicio", "EDA - Análisis de Datos", "Predicción", "Sobre el Modelo", "Login"])
 
 # ======================= PÁGINA PRINCIPAL =======================
 if pagina == "Inicio":
@@ -238,6 +238,32 @@ elif pagina == "Predicción":
         st.write(resultado)
         st.write("📊 Probabilidad Predicha:", prediccion.item())
 
+elif pagina == "Login":
+
+
+    # Inicializar sesión si no existe
+    if "authenticated" not in st.session_state:
+        st.session_state["authenticated"] = False
+
+    # Si no está autenticado, mostrar la pantalla de login
+    if not st.session_state["authenticated"]:
+        st.title("🔑 Login")
+
+        username = st.text_input("📧 Username")
+        password = st.text_input("🔒 Password", type="password")
+
+        if st.button("LOGIN"):
+            if username == "admin" and password == "1234":
+                st.session_state["authenticated"] = True
+                st.rerun()  # 🔄 Recargar la página para mostrar "database"
+
+            else:
+                st.error("❌ Invalid username or password.")
+
+    # Si ya está autenticado, mostrar la página "database"
+    if st.session_state["authenticated"]:
+        st.title("📂 Database Page")
+        st.write("Bienvenido a la base de datos. Aquí se mostrarán los registros almacenados.")
         
         
 
