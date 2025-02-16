@@ -15,7 +15,7 @@ st.set_page_config(page_title="Predicción de Crédito", page_icon="💳", layou
 # ======================= CARGA DE DATOS =======================
 @st.cache_data
 def load_data():
-    return pd.read_csv("streamlit\dataset.csv")  # Asegúrate de la ruta correcta
+    return pd.read_csv("dataset.csv")  # Asegúrate de la ruta correcta
 
 df = load_data()
 
