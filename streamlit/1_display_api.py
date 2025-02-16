@@ -229,7 +229,7 @@ elif pagina == "Predicción":
     # ==================== 📌 DEFINICIÓN DE LA BASE DE DATOS ==================== #
     def insert_prediction(data):
         """Inserta una nueva predicción en la base de datos."""
-        conn = sqlite3.connect("loan_predictions.db")
+        conn = sqlite3.connect("streamlit/loan_predictions.db")
         cursor = conn.cursor()
         try:
             sql_insert = """
