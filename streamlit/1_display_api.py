@@ -126,7 +126,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.sidebar.title("📌 Menú")
-pagina = st.sidebar.radio("Ir a:", ["Inicio", "EDA - Análisis de Datos", "Predicción", "Sobre el Modelo", "Login", "About Us"])
+pagina = st.sidebar.radio("Ir a:", ["Inicio", "EDA - Análisis de Datos", "Predicción", "Login", "About Us"])
 
 # ======================= PÁGINA PRINCIPAL =======================
 if pagina == "Inicio":
