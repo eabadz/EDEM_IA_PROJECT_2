@@ -35,7 +35,7 @@ def create_connection(db_file):
 # ======================= CREAR LA BASE DE DATOS =======================
 def crear_base_datos():
     """Crea la base de datos y la tabla si no existen"""
-    conn = sqlite3.connect(r"streamlit\loan_predictions.db")
+    conn = sqlite3.connect(r"streamlit/loan_predictions.db")
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS loan_predictions (
@@ -59,7 +59,7 @@ crear_base_datos()
 
 # ======================= FUNCION PARA INSERTAR LOS DATOS EN LA BASE DE DATOS =======================
 def fetch_predictions():
-    conn = sqlite3.connect("streamlit\loan_predictions.db")
+    conn = sqlite3.connect("streamlit/loan_predictions.db")
     query = "SELECT * FROM loan_predictions ORDER BY date_time DESC"
     df = pd.read_sql_query(query, conn)
     conn.close()
@@ -99,13 +99,13 @@ class NeuralNetwork(nn.Module):
 def cargar_modelo():
     input_dim = 18  # Número de características después de OHE
     model = NeuralNetwork(input_dim)
-    model.load_state_dict(torch.load("streamlit\modelo2_credito.pth", map_location=torch.device("cpu")))
+    model.load_state_dict(torch.load("streamlit/modelo2_credito.pth", map_location=torch.device("cpu")))
     model.eval()
     return model
 
 @st.cache_resource
 def cargar_scaler():
-    return joblib.load("streamlit\scaler2.pkl")
+    return joblib.load("streamlit/scaler2.pkl")
 
 # Cargar el modelo y el escalador una sola vez
 model = cargar_modelo()
@@ -174,7 +174,7 @@ if pagina == "Inicio":
     st.write("🧠 *Comprender* qué factores influyen en la aprobación ")
 
     with col2:
-        imagen = Image.open(r"IMAGENES\logo_png.png")
+        imagen = Image.open(r"IMAGENES/logo_png.png")
         st.image(imagen, width=250)
         st.markdown("<p style='text-align: center; font-size: 12px;'></p>", unsafe_allow_html=True)
 
@@ -399,4 +399,4 @@ elif pagina == "About Us":
             st.markdown(f"[🔗 LinkedIn Profile]({member['linkedin']})")
             st.write("---")  # Línea divisoria entre miembros
 
-    st.image(r"IMAGENES\foto_grupo.jpeg")
+    st.image(r"IMAGENES/foto_grupo.jpeg")
