@@ -148,7 +148,7 @@ if pagina == "Inicio":
     st.markdown("##  Introducción", unsafe_allow_html=True)
     st.write(
         "<div style='text-align: justify; font-size: 16px;'>"
-        "Esta aplicación utiliza un modelo de machine learning para predecir la aprobación de créditos bancarios. "
+        "Esta aplicación utiliza un modelo de deep learning para predecir la aprobación de créditos bancarios. "
         "A través del análisis de diversas características financieras y personales, el modelo puede estimar si una solicitud "
         "de crédito tiene una probabilidad de ser aprobada o no. Esta herramienta es útil tanto "
         "para individuos que deseen entender mejor los factores que influyen en una decisión crediticia."
