@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit.components.v1 as components
+import seaborn as sns
 
 # Título principal de la aplicación
 # st.title("📈 LOAN APPROVAL PREDICTION")
@@ -26,7 +27,7 @@ if page == "Introducción":
 
 # Página: Análisis Exploratorio de Datos (EDA)
 elif page == "EDA":
-    # Markdown to centre the header
+    # Markdown para centrar el título
     st.markdown("""
     <style>
     .centered-header {
@@ -37,17 +38,34 @@ elif page == "EDA":
     </style>
     <h2 class='centered-header'>Exploratory Data Analysis</h2>
     """, unsafe_allow_html=True)
-    # Load the dataset
-    df = pd.read_csv('dataset.csv')
-    df 
-    # Select Box for selecting the way data is displayed
+
+    # Cargar dataset
+    df = pd.read_csv('cnn_classification/dataset_1.csv')
+    columns_to_drop = ["gender", "person_emp_exp", "credit_score", "rate_income", "loan_amount"]
+    df = df.drop(columns=columns_to_drop, errors='ignore')
+    def remove_outliers(df, columns):
+        for col in columns:
+            Q1 = df[col].quantile(0.1)  # Primer cuartil
+            Q3 = df[col].quantile(0.9)  # Tercer cuartil
+            IQR = Q3 - Q1  # Rango intercuartílico
+            lower_bound = Q1 - 1.5 * IQR
+            upper_bound = Q3 + 1.5 * IQR
+            df = df[(df[col] >= lower_bound) & (df[col] <= upper_bound)]
+        return df
+
+    # Aplicar eliminación de outliers en "edad" e "income"
+    df = remove_outliers(df, ["person_age", "person_income"])
+    df
+    # ================== Análisis Exploratorio de Datos ==================
+
+    # Selector para elegir entre estadísticas descriptivas y gráficos
     option = st.selectbox(
-    "Select the type of analysis you want to view:",
-    ["📋 Descriptive Statistics", "📊 Graphs"]
-)
-    # Display content based on the selected option
+        "Select the type of analysis you want to view:",
+        ["📋 Descriptive Statistics", "📊 Graphs"]
+    )
+    
+    # ================== DESCRIPTIVE STATISTICS ==================
     if option == "📋 Descriptive Statistics":
-        
         col1, col2 = st.columns(2)
         with col1:
             st.subheader("Summary of Data Types")
@@ -55,66 +73,99 @@ elif page == "EDA":
         with col2:
             st.subheader("Missing Values per Variable")
             st.write(df.isnull().sum())
-            
-        st.subheader(" Summary Statistics",)
-        st.write("")
-        st.write(df.describe())  # Display summary statistics like mean, median, etc.
-        st.write("")
 
-        # Selectbox showing the display names
+        st.subheader("Summary Statistics")
+        st.write(df.describe())  # Mostrar estadísticas descriptivas
+
+        # Selector para variables categóricas
         selected_display_name = st.selectbox("Select a categorical variable:", list(column_display_names.keys()))
-
-        # Get the actual column name from the display name
         selected_col = column_display_names[selected_display_name]
 
-        # Display the count of each category in the selected column
+        # Mostrar los valores únicos de la variable categórica seleccionada
         st.subheader(f"Value Counts for {selected_display_name}")
         st.write(df[selected_col].value_counts())
-        st.write("")
+
         st.subheader("Loan Approval Status Counts ✅/❌")
         st.write(df['loan_status'].value_counts())
+
+    # ================== GRAPHICAL ANALYSIS ==================
     elif option == "📊 Graphs":
-        # Identify categorical columns
-        categorical_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
+        # Selector para elegir entre variables categóricas y numéricas
+        variable_type = st.radio("Select Variable Type:", ["Categorical", "Numerical"], horizontal=True)
 
-        # Create two columns: one for selecting the categorical variable, one for selecting the chart type
-        col1, col2 = st.columns(2)
+        if variable_type == "Categorical":
+            # Identificar variables categóricas
+            categorical_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
 
-        with col1:
-            selected_display_name = st.radio("Select a categorical variable:", list(column_display_names.keys()))
-            selected_col = column_display_names[selected_display_name]
+            col1, col2 = st.columns(2)
 
-        with col2:
-            chart_type = st.radio("Select a chart type:", ["Pie Chart", "Bar Chart"])
+            with col1:
+                selected_display_name = st.radio("Select a categorical variable:", list(column_display_names.keys()))
+                selected_col = column_display_names[selected_display_name]
 
-        # Display the selected chart in a smaller container
-        with st.container():
+            with col2:
+                chart_type = st.radio("Select a chart type:", ["Pie Chart", "Bar Chart"])
+
+            # Mostrar el gráfico seleccionado
             st.markdown(f"<h4 style='text-align: center;'>{chart_type} for {selected_display_name}</h4>", unsafe_allow_html=True)
 
+            fig, ax = plt.subplots(figsize=(4, 3))
             if chart_type == "Pie Chart":
-                fig, ax = plt.subplots(figsize=(3, 3))  # Smaller pie chart size
                 df[selected_col].value_counts().plot.pie(
                     autopct='%1.1f%%', 
                     startangle=90, 
                     ax=ax, 
                     colors=plt.cm.Paired.colors,
-                    textprops={'fontsize': 8}  # Smaller text inside the pie chart
+                    textprops={'fontsize': 8}
                 )
-                ax.set_ylabel('')  # Hide the y-axis label for better visualization
-                st.pyplot(fig)
-
+                ax.set_ylabel('')
             elif chart_type == "Bar Chart":
-                fig, ax = plt.subplots(figsize=(4, 3))  # Smaller bar chart size
                 df[selected_col].value_counts().plot.bar(
                     color=plt.cm.Paired.colors, 
                     edgecolor='black', 
                     ax=ax
                 )
-                ax.set_xlabel(selected_display_name, fontsize=10)  # Smaller axis labels
+                ax.set_xlabel(selected_display_name, fontsize=10)
                 ax.set_ylabel("Count", fontsize=10)
-                plt.xticks(fontsize=8)  # Smaller tick labels
+                plt.xticks(fontsize=8)
                 plt.yticks(fontsize=8)
-                st.pyplot(fig)
+
+            st.pyplot(fig)
+
+        elif variable_type == "Numerical":
+            # Identificar variables numéricas y **remover guiones bajos** para mostrar nombres más amigables
+            numerical_cols = df.select_dtypes(include=['number']).columns.tolist()
+            numerical_display_names = {col: col.replace("_", " ").title() for col in numerical_cols}
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+                selected_display_name = st.radio("Select a numerical variable:", list(numerical_display_names.values()))
+                selected_col = [col for col, display_name in numerical_display_names.items() if display_name == selected_display_name][0]
+
+            with col2:
+                chart_type = st.radio("Select a chart type:", ["Histogram", "Boxplot", "Scatter Plot"])
+
+            # Mostrar el gráfico seleccionado
+            st.markdown(f"<h4 style='text-align: center;'>{chart_type} for {selected_display_name}</h4>", unsafe_allow_html=True)
+
+            fig, ax = plt.subplots(figsize=(4, 3))
+            if chart_type == "Histogram":
+                sns.histplot(df[selected_col], kde=True, ax=ax)
+            elif chart_type == "Boxplot":
+                sns.boxplot(x=df[selected_col], ax=ax)
+            elif chart_type == "Scatter Plot":
+                selected_display_name2 = st.radio("Select another numerical variable for Scatter Plot:", list(numerical_display_names.values()))
+                selected_col2 = [col for col, display_name in numerical_display_names.items() if display_name == selected_display_name2][0]
+                sns.scatterplot(x=df[selected_col], y=df[selected_col2], ax=ax)
+
+            st.pyplot(fig)
+    st.subheader("📈 Correlation Matrix")
+    numeric_df = df.select_dtypes(include=['number'])
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.heatmap(numeric_df.corr(), annot=True, cmap="coolwarm", fmt=".2f", ax=ax)
+    st.pyplot(fig)
 
 # Página: Predicción del Modelo
 elif page == "Predicción del Modelo":
